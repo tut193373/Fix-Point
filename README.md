@@ -3,13 +3,13 @@ programming test
 
 # 出力画面
 
- ![キャプチャ](https://user-images.githubusercontent.com/58971155/151856430-64093ee5-36df-481b-8505-715cf9a4a2cd.JPG)
+![キャプチャ](https://user-images.githubusercontent.com/58971155/151857013-353b2a37-3ff3-4cf4-ac10-b96a52268d7f.JPG)
 
 各設問に応じて、メッセージを出力させます。
-(設問1)span (year)/(month)/(day) (hour):(minutes):(seconds)
-(設問2)recovery
-(設問3)overload (year)/(month)/(day) (hour):(minutes):(seconds)
-(設問4)There may be a switch failure on this network.
+(Q.1)recovery : (year)/(month)/(day) (hour):(minutes):(seconds)
+(Q.2)span 0/0/0 0:0:20 network failure
+(Q.3)overload (year)/(month)/(day) (hour):(minutes):(seconds)
+(Q.4)There may be a switch failure on this network.
  
 # 特徴
  
