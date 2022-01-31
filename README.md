@@ -13,13 +13,32 @@ programming test
  
 C++でプログラムを組みました。
 実行の際はコマンドライン引数に「n m t」の順番で渡す必要があります。
+
+構成は以下のようになっています。  
+.  
+├── main.cpp  
+├── log_structure.cpp  
+├── log_structure.h  
+└── network_log.txt  
+ 
+ *main.cpp*  
+ ログの読み込みや日付の処理など、全体の処理を記述しています。
+ 
+ *log_structure.cpp*  
+ ログデータを保持するクラス構造体のコンストラクタなどを定義しています。
+ 
+ *log_structure.h*  
+ ログをクラスとして扱ったほうが楽だと考えたため、クラスを用意しました。
+ 
+ *network_log.txt*  
+ ログがどのような形式で記録されているのか指定がなかったので、テキストファイルとしました。
  
 # 動作環境
- 
-"hoge"を動かすのに必要なライブラリなどを列挙する
- 
-* huga 3.5.2
-* hogehuga 1.0.2
+
+以下の環境で動作を確認しました。  
+* 言語：C++ 1.7  
+* 開発環境：Visual Studio 2019  
+* OS：Windows 10  
  
 # Installation
  
