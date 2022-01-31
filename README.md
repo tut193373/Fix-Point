@@ -2,7 +2,9 @@
 programming test
 
 # 出力画面
- ![キャプチャ](https://user-images.githubusercontent.com/58971155/151766564-068169a4-6c00-44df-a5ff-194888d4ce69.JPG)
+
+ ![キャプチャ](https://user-images.githubusercontent.com/58971155/151856430-64093ee5-36df-481b-8505-715cf9a4a2cd.JPG)
+
 各設問に応じて、メッセージを出力させます。
 (設問1)span (year)/(month)/(day) (hour):(minutes):(seconds)
 (設問2)recovery
