@@ -49,7 +49,6 @@ std::vector<std::string> split(std::string str, char del) {
 }
 
 tm string_to_date(std::string t) {
-    time_t result;
     tm date;
     int year, mon, day, hour, min, sec;
     sscanf_s(t.c_str(), "%04d%02d%02d%02d%02d%02d", &year, &mon, &day, &hour, &min, &sec);
@@ -150,11 +149,13 @@ bool match_network_ipv4(std::string a, std::string b) {
     std::string bin_a = toBinary(std::stoi(network_a[0])) + toBinary(std::stoi(network_a[1])) + toBinary(std::stoi(network_a[2])) + toBinary(std::stoi(prefix_a[0]));
     std::string bin_b = toBinary(std::stoi(network_b[0])) + toBinary(std::stoi(network_b[1])) + toBinary(std::stoi(network_b[2])) + toBinary(std::stoi(prefix_b[0]));
 
-    int pre_num = std::stoi(prefix_a[1]);
+    int pre_num = 32 - std::stoi(prefix_a[1]);
     std::bitset<32> b_a(bin_a);
     std::bitset<32> b_b(bin_b);
+    //std::cout << network_a[4] << " : " << b_a << "\t" << network_b[4] << " : " << b_b << std::endl;
     b_a = b_a >> pre_num;
     b_b = b_b >> pre_num;
+    //std::cout << network_a[4] << " : " << b_a << "\t" << network_b[4] << " : " << b_b << std::endl << std::endl;
 
     std::bitset<32> b_xor = b_a ^ b_b;
 
@@ -166,7 +167,7 @@ bool match_network_ipv4(std::string a, std::string b) {
 
 
 int main(int argc, char* argv[]) {
-    if (argc < 4) {
+    if (argc != 4) {
         std::cout << "error >> please write the arguments when you compile this program." << std::endl;
         return -1;
     }
@@ -175,7 +176,7 @@ int main(int argc, char* argv[]) {
     int m = atoi(argv[2]);
     int t = atoi(argv[3]);
 
-    std::string filename = "network_log.txt";
+    std::string filename = "network_log(test).txt";
     std::ifstream ifs(filename);
 
     if (!ifs)
@@ -184,10 +185,16 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
+    //std::ofstream outputfile("timer.txt");
+    //int loopnum = 1;
+    //std::cout << "clock():\n";
+
     std::string logtext;
     std::list<Log> data;
     std::list<Log> error_server;
     while (getline(ifs, logtext)) {
+        clock_t start = clock();    // timer
+
         std::vector<std::string> split_text = split(logtext, ',');
         if (split_text.size() != 3) {
             std::cout << "error >> log text is wrong : " << logtext << std::endl;
@@ -198,68 +205,86 @@ int main(int argc, char* argv[]) {
 
         if (log.get_response() != "-") {
             std::cout << "[Log] " << log.get_logtext() << std::endl;
+            int back_num = 0;
             for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
                 if ((*itr).get_address() == log.get_address()) {
-                    if ((*itr).get_response() == "-")   std::cout << "\t\t(Ý–â2)recovery" << std::endl;
-                    if (atoi(log.get_response().c_str()) >= t)  log.set_m((*itr).get_m() + 1);
-                     
-                    break;
-                }
-            }
-            int count = log.get_m();
-            if (count > 0) {
-                for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
-                    if ((*itr).get_address() == log.get_address() && count == 0) {
-                        if (count == 0) {
-                            std::cout << "\t\t(Ý–â3)overload ";
-                            compare_date((*itr).get_date(), log.get_date());     // (Ý–â1)
-                            break;
+                    if (back_num == 0) {
+                        if ((*itr).get_response() == "-") {
+                            std::cout << "\t(Q.1)recovery : ";
+                            back_num = 1;
                         }
+                        if (atoi(log.get_response().c_str()) >= t)  log.set_m((*itr).get_m() + 1);
                     }
-                    if ((*itr).get_address() == log.get_address())      count -= 1;
-                }
-            }
-        }
-        else {
-            std::cout << "[Time Out] " << log.get_logtext() << std::endl;
-            for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
-                if ((*itr).get_address() == log.get_address()) {
-                    if ((*itr).get_response() == "-") {
-                        log.set_n((*itr).get_n() + 1);
-                    }
-                    break;
-                }
-            }
-            int count = log.get_n();
-
-            for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
-                if ((*itr).get_address() == log.get_address() && count == 0) {
-                    if (count == 0) {
-                        std::cout << "\t(Ý–â1)span ";
-                        compare_date((*itr).get_date(), log.get_date());     // (Ý–â1)
+                    if ((*itr).get_response() != "-") {
+                        compare_date((*itr).get_date(), log.get_date());
                         break;
                     }
                 }
-                if ((*itr).get_address() == log.get_address())      count -= 1;
+            }
+            int count = 1;
+            double time_diff = std::stod(log.get_response());
+            for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
+                if ((*itr).get_address() == log.get_address()) {
+                    if ((*itr).get_response() != "-") {
+                        if (count < m)  time_diff += std::stod((*itr).get_response());
+                        count++;
+                    }
+                }
+                if (count >= m) break;
+            }
+            time_diff /= m;
+            if (time_diff > t)   std::cout << "\t\t\t(Q.3)overload : mean " << time_diff << std::endl << std::endl;
+        }
+        else {
+            std::cout << "[Time Out] " << log.get_logtext() << std::endl;
+            int n_count = 0;
+            bool find_error = true;
+            for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
+                if (match_network_ipv4((*itr).get_address(), log.get_address())) {
+                    if ((*itr).get_response() == "-") {
+                        if ((*itr).get_address() == log.get_address() && find_error) {
+                            log.set_n((*itr).get_n() + 1);
+                            find_error = false;
+                        }
+                        n_count += 1;
+                        if (n_count >= n)   break;
+                    }
+                    else {
+                        n_count = 0;
+                        break;
+                    }
+                }
+            }
+            int count = 0;
+            if (log.get_n() >= n)   count = log.get_n() + 1;
+
+            for (auto itr = data.rbegin(); itr != data.rend(); ++itr) {
+                if ((*itr).get_address() == log.get_address()) {
+                    if (count == 1) {
+                        std::cout << "\t\t(Q.2)span ";
+                        compare_date((*itr).get_date(), log.get_date());
+                        break;
+                    }
+                    count -= 1;
+                } 
             }
             
             if (log.get_n() >= n) {
-                std::cout << "\t\t(Ý–â2)network failure" << std::endl;
+                std::cout << "\t\t(Q.2)network failure" << std::endl;
                 int error_count = 0;
-                for (auto itr = error_server.rbegin(); itr != error_server.rend(); ++itr) {
-                    if (match_network_ipv4((*itr).get_address(), log.get_address())) {
-                        error_count++;
-                    }
-                }
-                if (error_count >= n)   std::cout << "\t\t(Ý–â4)There may be a switch failure on this network." << std::endl;
+                if (n_count >= n)   std::cout << "\t\t\t\t(Q.4)There may be a switch failure on this network."  << std::endl;
                 error_server.push_back(log);
             }
             std::cout << std::endl;
 
         }
-
         data.push_back(log);
+
+        //clock_t end = clock();     // timer
+        //outputfile << loopnum << "\t" << end - start << "\n";
+        //loopnum++;
     }
+    //outputfile.close();
 
     return 0;
 }
