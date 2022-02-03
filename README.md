@@ -5,11 +5,11 @@ programming test
 
 ![キャプチャ](https://user-images.githubusercontent.com/58971155/151857013-353b2a37-3ff3-4cf4-ac10-b96a52268d7f.JPG)
 
-各設問に応じて、メッセージを出力させます。
-(Q.1)recovery : (year)/(month)/(day) (hour):(minutes):(seconds)
-(Q.2)span 0/0/0 0:0:20 network failure
-(Q.3)overload (year)/(month)/(day) (hour):(minutes):(seconds)
-(Q.4)There may be a switch failure on this network.
+各設問に応じて、メッセージを出力させます。  
+(Q.1)recovery : (year)/(month)/(day) (hour):(minutes):(seconds)  
+(Q.2)span 0/0/0 0:0:20 network failure  
+(Q.3)overload (year)/(month)/(day) (hour):(minutes):(seconds)  
+(Q.4)There may be a switch failure on this network.  
  
 # 特徴
  
