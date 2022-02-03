@@ -7,7 +7,7 @@ programming test
 
 各設問に応じて、メッセージを出力させます。  
 (Q.1)recovery : (year)/(month)/(day) (hour):(minutes):(seconds)  
-(Q.2)span 0/0/0 0:0:20 network failure  
+(Q.2)span 0/0/0 0:0:0 network failure  
 (Q.3)overload (year)/(month)/(day) (hour):(minutes):(seconds)  
 (Q.4)There may be a switch failure on this network.  
  
